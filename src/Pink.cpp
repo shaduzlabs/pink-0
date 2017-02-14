@@ -154,7 +154,9 @@ void Pink::togglePlay()
   {
     return;
   }
-  if (m_audio.engine().isPlaying())
+  
+  bool playing = m_audio.engine().isPlaying();
+  if (playing)
   {
     m_audio.engine().stopPlaying();
   }
@@ -170,7 +172,7 @@ void Pink::togglePlay()
     {
       continue;
     }
-    listener->runStatusChanged(m_audio.engine().isPlaying());
+    listener->runStatusChanged(!playing);
   }
 }
 

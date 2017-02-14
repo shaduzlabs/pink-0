@@ -207,7 +207,7 @@ initSliders = function()
 {
   slider_tempo = new dhtmlXSlider({
     parent: "slider-tempo",
-    size: 305,
+    size: 275,
     value: 120.0,
     step: 0.25,
     min: 20,
@@ -223,7 +223,7 @@ initSliders = function()
 
   slider_loopLength = new dhtmlXSlider({
     parent: "slider-loopLength",
-    size: 305,
+    size: 275,
     value: 4.0,
     step: 0.25,
     min: 0.25,

@@ -1,0 +1,10 @@
+/*
+        ##########    Copyright (C) 2016 Vincenzo Pacella
+        ##      ##    Distributed under MIT license, see file LICENSE
+        ##      ##    or <http://opensource.org/licenses/MIT>
+        ##      ##
+##########      ############################################################# shaduzlabs.com #####*/
+
+#define PINK_VERSION_MAJOR @PINK_VERSION_MAJOR@
+#define PINK_VERSION_MINOR @PINK_VERSION_MINOR@
+#define PINK_VERSION_MICRO @PINK_VERSION_MICRO@

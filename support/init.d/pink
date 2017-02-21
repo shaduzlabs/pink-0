@@ -1,0 +1,59 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          pink
+# Required-Start:
+# Required-Stop:
+# Should-Start:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: piNK daemon
+# Description:       Ableton Link daemon for Raspberry pi
+### END INIT INFO
+
+# Ableton Link daemon for Raspberry Pi
+
+DAEMON_NAME=pinkd
+DAEMON_BINARY=/usr/sbin/$DAEMON_NAME
+DAEMON_LOCK_FILE=/var/lock/subsys/$DAEMON_NAME
+
+start() {
+    # Check if the daemon binary exists
+    [ -x $DAEMON_BINARY ] || exit 5
+    
+    # Start the daemon
+    $DAEMON_BINARY
+    RETVAL=$?
+    echo
+
+    [ $RETVAL -eq 0 ] && touch $DAEMON_LOCK_FILE
+    return $RETVAL
+}
+
+stop() {
+    killall $DAEMON_NAME
+    RETVAL=$?
+    echo
+
+    [ $RETVAL -eq 0 ] && rm -f $DAEMON_LOCK_FILE
+    return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status $prog
+        ;;
+  restart)
+        stop
+        start
+        ;;
+   *)
+        echo $"Usage: $0 {start|stop|status|restart}"
+        exit 2
+esac

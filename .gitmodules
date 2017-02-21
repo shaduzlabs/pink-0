@@ -1,0 +1,6 @@
+[submodule "modules/link"]
+	path = modules/link
+	url = https://github.com/shaduzlabs/link.git
+[submodule "modules/portaudio"]
+	path = modules/portaudio
+	url = https://git.assembla.com/portaudio.git

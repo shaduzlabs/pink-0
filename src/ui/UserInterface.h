@@ -35,8 +35,7 @@ public:
   using tCallbackEncoderChanged = std::function<void(bool, bool)>;
   using tCallbackButtonPressed = std::function<void()>;
 
-  UserInterface(std::shared_ptr<Pink> pink_) : m_pink(pink_)
-  {
+  UserInterface(std::shared_ptr<Pink> pink_) : m_pink(pink_) {
     m_pink->addListener(pinkListenerId(), this);
   }
 

@@ -3,8 +3,7 @@
         ##      ##    Distributed under MIT license, see file LICENSE
         ##      ##    or <http://opensource.org/licenses/MIT>
         ##      ##
-##########      #############################################################
-shaduzlabs.com #####*/
+##########      ############################################################# shaduzlabs.com #####*/
 
 #pragma once
 

@@ -11,6 +11,8 @@ project (pink)
 set(PINK_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(PINK_BUILD_DIR ${CMAKE_BINARY_DIR})
 
+option(USE_PI_ZERO "Use RaspberryPI Zero shield as user interface" ON)
+
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
   set(IS_PINK ON)
 else()
@@ -43,7 +45,7 @@ string(TIMESTAMP PINK_BUILD_DATE "%Y-%m-%d")
 
 set (PINK_VERSION_MAJOR 0)
 set (PINK_VERSION_MINOR 0)
-set (PINK_VERSION_MICRO 1)
+set (PINK_VERSION_MICRO 2)
 set (PINK_VERSION_STRING "${PINK_VERSION_MAJOR}.${PINK_VERSION_MINOR}.${PINK_VERSION_MICRO}")
 
 if($ENV{APPVEYOR})
@@ -115,10 +117,18 @@ include(modules/link/AbletonLinkConfig.cmake)
 
 set(
   src_ui_SRCS
-    src/ui/UserInterfacePiZero.cpp
-    src/ui/UserInterfacePiZero.h
     src/ui/UserInterface.h
+    src/ui/UserInterfaceNone.h
 )
+
+if(USE_PI_ZERO)
+  message("   Raspberry PI Zero user interface enabled")
+  set(
+    src_ui_SRCS
+      src/ui/UserInterfacePiZero.cpp
+      src/ui/UserInterfacePiZero.h
+  )
+endif()
 
 set(
   src_SRCS
@@ -139,6 +149,10 @@ set(
 
 add_executable( ${PROJECT_NAME} ${PINK_SRCS} )
 set_target_properties( pink PROPERTIES OUTPUT_NAME pinkd)
+
+if(USE_PI_ZERO)
+  target_compile_definitions(pink PRIVATE UI_USE_RASPBERRY_PI_ZERO)
+endif()
 
 target_include_directories( pink PRIVATE /usr/include/ /usr/local/include)
 

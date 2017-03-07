@@ -1,0 +1,24 @@
+Resistors
+12x  330R 0402 (R1 - R12)
+2x   750R 0402 (R15, R16)
+2x   10K 0402 (R13, R14)
+
+Capacitors
+2x   33n 0603  (C1, C2)
+
+Transistors
+2x   MMBT3904 (T1, T2)
+
+LEDs
+3x   LED 0603 yellow
+1x   LED 0603 green
+
+Connectors
+2x   Erthenvar PJ301BM
+1x   2x40 pin female header
+
+Misc
+1x   Display HP QDSP6064
+1x   Rotary encoder w/ pushbutton
+1x   6mm tactile switch
+1x   Pink-0 pcb

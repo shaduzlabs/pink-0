@@ -111,6 +111,7 @@ make
 if [ $platform == "linux-rpi" ];
   then
     sudo make install
+    sudo update-rc.d pink defaults
 fi
 cd ..
 

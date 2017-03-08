@@ -3,7 +3,8 @@
         ##      ##    Distributed under MIT license, see file LICENSE
         ##      ##    or <http://opensource.org/licenses/MIT>
         ##      ##
-##########      ############################################################# shaduzlabs.com #####*/
+##########      #############################################################
+shaduzlabs.com #####*/
 
 #pragma once
 
@@ -23,7 +24,11 @@ namespace pi {
 
 class UserInterfaceNone : public UserInterface {
 public:
-  UserInterfaceNone(std::shared_ptr<Pink> pink_) : UserInterface(pink_) {}
+  UserInterfaceNone(std::shared_ptr<Pink> pink_) : UserInterface(pink_) {
+    if (pink_) {
+      pink_->togglePlay();
+    }
+  }
 
   void tempoChanged(double /*t_*/) override {}
   void loopLengthChanged(double /*t_*/) override {}

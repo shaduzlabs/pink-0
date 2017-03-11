@@ -34,12 +34,16 @@ public:
     running,
   };
 
-  UserInterfacePiZero(std::shared_ptr<Pink> /*pink_*/);
-  ~UserInterfacePiZero();
+  enum class DisplayState
+  {
+    tempo,
+    length,
+    ppqn,
+    peers,
+  };
 
-  void display(int /*value_*/) override;
-  void display(double /*value_*/) override;
-  void display(const std::string& /*value_*/) override;
+  UserInterfacePiZero(std::shared_ptr<Pink> /*pink_*/);
+  ~UserInterfacePiZero() override;
 
   void tempoChanged(double /*t_*/) override;
   void loopLengthChanged(double /*t_*/) override;
@@ -50,6 +54,10 @@ public:
   void clockMultiplierChanged(const std::string& /*cm_*/) override;
 
 private:
+  void display(int /*value_*/);
+  void display(double /*value_*/);
+  void display(const std::string& /*value_*/);
+
   void registerCallbacks();
 
   void hardwareIO();

@@ -5,7 +5,7 @@
         ##      ##
 ##########      ############################################################# shaduzlabs.com #####*/
 
-#include "UserInterfacePiZero.h"
+#include "ui/UserInterfacePiZero.h"
 
 #include <cmath>
 #include <sstream>
@@ -243,6 +243,46 @@ UserInterfacePiZero::~UserInterfacePiZero()
 
 // -------------------------------------------------------------------------------------------------
 
+void UserInterfacePiZero::tempoChanged(double t_)
+{
+  m_engineTempo = t_;
+  m_updateUI.store(true);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+void UserInterfacePiZero::loopLengthChanged(double l_)
+{
+  m_engineLoopLength = l_;
+  m_updateUI.store(true);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+void UserInterfacePiZero::numPeersChanged(std::size_t n_)
+{
+  m_numPeers = n_;
+  m_updateUI.store(true);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+void UserInterfacePiZero::runStatusChanged(bool playing_)
+{
+  m_engineRunning = playing_;
+  m_updateUI.store(true);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+void UserInterfacePiZero::clockMultiplierChanged(const std::string& cm_)
+{
+  m_engineClockMultiplier = cm_;
+  m_updateUI.store(true);
+}
+
+// -------------------------------------------------------------------------------------------------
+
 void UserInterfacePiZero::display(int value_)
 {
   std::string strValue = std::to_string(static_cast<int>(value_));
@@ -321,46 +361,6 @@ void UserInterfacePiZero::display(const std::string& value_)
     m_displayString = strFill + strValue;
     m_displayShowDot = false;
   }
-}
-
-// -------------------------------------------------------------------------------------------------
-
-void UserInterfacePiZero::tempoChanged(double t_)
-{
-  m_engineTempo = t_;
-  m_updateUI.store(true);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-void UserInterfacePiZero::loopLengthChanged(double l_)
-{
-  m_engineLoopLength = l_;
-  m_updateUI.store(true);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-void UserInterfacePiZero::numPeersChanged(std::size_t n_)
-{
-  m_numPeers = n_;
-  m_updateUI.store(true);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-void UserInterfacePiZero::runStatusChanged(bool playing_)
-{
-  m_engineRunning = playing_;
-  m_updateUI.store(true);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-void UserInterfacePiZero::clockMultiplierChanged(const std::string& cm_)
-{
-  m_engineClockMultiplier = cm_;
-  m_updateUI.store(true);
 }
 
 // -------------------------------------------------------------------------------------------------

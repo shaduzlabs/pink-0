@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>pink web UI</title>
+  <link rel="stylesheet" type="text/css" href="assets/css/siimple.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/pink.css">
+
+  <script src="assets/js/nmws.min.js"></script>
+
+  <script src="assets/js/scripts.js"></script>
+</head>
+
+<body>
+  <div class="siimple-h1">pink</div>
+
+  <div class="led-green" id="led-connected">&nbsp;</div>
+  <div class="led-green" id="led-enabled">&nbsp;</div>
+  <div class="led-green" id="led-playing" onClick="togglePlay()">&nbsp;</div>
+
+  <label class="siimple-label">Tempo:</label>
+  <input type="text" class="siimple-input" id="value-tempo"></input>
+  <br/>
+
+  <label class="siimple-label">Length:</label>
+  <input type="text" class="siimple-input" id="value-loopLength"></input>
+  <br/>
+
+  <label class="siimple-label">Peers:</label>
+  <input type="text" class="siimple-input" id="value-numPeers"></input>
+  <br/>
+
+  <label class="siimple-label">Multiplier:</label>
+  <select class="siimple-input" id="value-multipliers" onChange="updateMultiplier()"></select>
+  <br/>
+
+  <div id="events"></div>
+
+</body>
+
+</html>

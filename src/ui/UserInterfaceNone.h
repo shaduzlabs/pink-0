@@ -35,6 +35,9 @@ public:
     }
   }
 
+  void statusChanged(bool /*enabled_*/) override
+  {
+  }
   void tempoChanged(double /*t_*/) override
   {
   }

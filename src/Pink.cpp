@@ -46,6 +46,7 @@ static sl::pi::Pink::ClockMultipliers k_clockMultipliers{{1 / 64., "1/64"},
 // -------------------------------------------------------------------------------------------------
 
 const std::size_t kListenerIdLength{16};
+const std::string kEmptyString = "";
 
 // -------------------------------------------------------------------------------------------------
 
@@ -111,6 +112,32 @@ Pink::Pink(double tempo_, double length_, double clockMultiplier_) : m_link(temp
   setLoopLength(length_);
 
   m_audio.engine().setClockMultiplier(k_clockMultipliers[m_currentClockMultiplier].value);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+bool Pink::isEnabled() const
+{
+  return m_link.isEnabled();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+void Pink::setEnabled(bool enabled_)
+{
+  std::lock_guard<std::mutex> lock(m_mtxEnabled);
+  m_link.enable(enabled_);
+  
+  for (const auto& l : m_listeners)
+  {
+    auto listener = l.second;
+    if (listener == nullptr)
+    {
+      continue;
+    }
+
+    listener->statusChanged(m_link.isEnabled());
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -231,6 +258,17 @@ const std::string& Pink::clockMultiplierLabel() const
 
 // -------------------------------------------------------------------------------------------------
 
+const std::string& Pink::clockMultiplierLabel(std::size_t index_) const
+{
+  if (index_ < k_clockMultipliers.size())
+  {
+    return k_clockMultipliers[index_].label;
+  }
+  return kEmptyString;
+}
+
+// -------------------------------------------------------------------------------------------------
+
 void Pink::setClockMultiplierIndex(std::size_t index_)
 {
   if (index_ < k_clockMultipliers.size())
@@ -247,6 +285,13 @@ void Pink::setClockMultiplierIndex(std::size_t index_)
       listener->clockMultiplierChanged(k_clockMultipliers[m_currentClockMultiplier].label);
     }
   }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+std::size_t Pink::numPeers() const
+{
+  return m_link.numPeers();
 }
 
 // -------------------------------------------------------------------------------------------------

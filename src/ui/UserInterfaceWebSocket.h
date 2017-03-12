@@ -32,6 +32,8 @@ public:
   UserInterfaceWebSocket(std::shared_ptr<Pink> /*pink_*/);
   ~UserInterfaceWebSocket() override;
 
+  void statusChanged(bool /*enabled_*/) override;
+
   void tempoChanged(double /*t_*/) override;
   void loopLengthChanged(double /*t_*/) override;
 
@@ -42,7 +44,7 @@ public:
 
 private:
   void onMessageReceived(std::string /*message_*/);
-  
+
   nmws::WebSocketServer m_wsServer;
 };
 

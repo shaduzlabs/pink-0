@@ -45,6 +45,10 @@ public:
   UserInterfacePiZero(std::shared_ptr<Pink> /*pink_*/);
   ~UserInterfacePiZero() override;
 
+  void statusChanged(bool /*enabled_*/) override
+  {
+  }
+
   void tempoChanged(double /*t_*/) override;
   void loopLengthChanged(double /*t_*/) override;
 

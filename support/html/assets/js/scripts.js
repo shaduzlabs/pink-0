@@ -1,4 +1,5 @@
 var wsClient;
+var linkEnabled;
 
 append = function(text)
 {
@@ -39,6 +40,11 @@ updateLoopLength = function()
 {
   var loopLength = document.getElementById('value-loopLength').value;
   sendCommand("setLoopLength", parseInt(loopLength))
+}
+
+updateEnabled = function()
+{
+  sendCommand("setEnabled", linkEnabled ? 0 : 1)
 }
 
 togglePlay = function()
@@ -110,10 +116,12 @@ createSocket = function()
         {
           if(result['enabled'])
           {
+            linkEnabled = true;
             document.getElementById("led-enabled").classList.add("led-active");
           }
           else
           {
+            linkEnabled = false;
             document.getElementById("led-enabled").classList.remove("led-active");
           }
         }

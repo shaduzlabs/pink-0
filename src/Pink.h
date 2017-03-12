@@ -93,7 +93,6 @@ private:
   unsigned m_defaultClockMultiplier;
   unsigned m_currentClockMultiplier;
 
-  std::mutex m_mtxEnabled;
   std::mutex m_mtxRunning;
 
   ableton::Link m_link;

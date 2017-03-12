@@ -125,9 +125,9 @@ bool Pink::isEnabled() const
 
 void Pink::setEnabled(bool enabled_)
 {
-  std::lock_guard<std::mutex> lock(m_mtxEnabled);
+  std::lock_guard<std::mutex> lock(m_mtxRunning);
   m_link.enable(enabled_);
-  
+
   for (const auto& l : m_listeners)
   {
     auto listener = l.second;
@@ -137,6 +137,11 @@ void Pink::setEnabled(bool enabled_)
     }
 
     listener->statusChanged(m_link.isEnabled());
+    if (!m_link.isEnabled() && m_audio.engine().isPlaying())
+    {
+      m_audio.engine().stopPlaying();
+      listener->runStatusChanged(m_audio.engine().isPlaying());
+    }
   }
 }
 
@@ -145,6 +150,10 @@ void Pink::setEnabled(bool enabled_)
 void Pink::togglePlay()
 {
   std::lock_guard<std::mutex> lock(m_mtxRunning);
+  if (!m_link.isEnabled())
+  {
+    return;
+  }
   if (m_audio.engine().isPlaying())
   {
     m_audio.engine().stopPlaying();

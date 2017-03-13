@@ -49,6 +49,7 @@
 
   </div> <!-- wrapper -->
 
+  <input type="hidden" id="pink-ip-address" value="<?php echo $_SERVER['SERVER_ADDR']; ?>"></input>
 </body>
 
 </html>

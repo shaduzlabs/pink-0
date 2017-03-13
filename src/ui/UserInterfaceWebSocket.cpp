@@ -18,7 +18,7 @@
 
 namespace
 {
-const std::string k_wsAddressAndPort = "ws://127.0.0.1:8888";
+const std::string k_wsAddressAndPort = "ws://*:8888";
 
 struct Command
 {

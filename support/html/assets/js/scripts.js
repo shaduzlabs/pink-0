@@ -86,7 +86,8 @@ resetUI = function()
 
 createSocket = function()
 {
-  wsClient = new nmws.Client("127.0.0.1", "8888");
+  var pinkIpAddress = document.getElementById("pink-ip-address").value;
+  wsClient = new nmws.Client(pinkIpAddress, "8888");
 
   wsClient.onConnectionEvent(function(connected_)
   {

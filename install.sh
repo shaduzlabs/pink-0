@@ -71,7 +71,9 @@ if [ $platform == "osx" ];
   then
     brew install cmake
   else
-    sudo apt-get install -y --force-yes cmake wiringpi
+    echo a
+#    sudo apt-get update
+#    sudo apt-get install -y --force-yes cmake wiringpi
 fi
 
 echo ""
@@ -80,18 +82,34 @@ echo ""
 echo -e "[ \033[1m\033[96mpink\033[m ] Install RaspAP --------------------------------------------------------"
 if [ $platform == "linux-rpi" ];
   then
-    wget -q https://git.io/vDr0i -O /tmp/raspap && bash /tmp/raspap
+    echo a
+#    wget -q https://git.io/vDr0i -O /tmp/raspap && bash /tmp/raspap
 fi
 
 echo ""
 echo ""
 echo ""
 echo -e "[ \033[1m\033[96mpink\033[m ] Build and install portaudio -------------------------------------------"
-cd modules/portaudio
-./configure --with-alsa --without-oss --without-jack
+#cd modules/portaudio
+#./configure --with-alsa --without-oss --without-jack
+#make
+#sudo make install
+#cd ../../
+echo a
+
+echo ""
+echo ""
+echo ""
+echo -e "[ \033[1m\033[96mpink\033[m ] Build and install nanomsg ---------------------------------------------"
+cd modules/nanomsg
+mkdir build
+cd build
+cmake ..
 make
 sudo make install
-cd ../../
+sudo ldconfig
+cd ../../../
+
 
 echo ""
 echo ""
@@ -102,10 +120,10 @@ mkdir build
 cd build
 if [ $1 == "no-ui" ]
   then
-    cmake -DCMAKE_BUILD_TYPE=Release -DUSE_PI_ZERO=OFF ..
+    cmake -DCMAKE_BUILD_TYPE=Release -DUSE_PI_ZERO=OFF -DUSE_WEBSOCKET=ON -DJUST_INSTALL_CEREAL=ON ..
   else
     echo -e "[ \033[1m\033[96mpink\033[m ] Raspberry Pi Zero shield support is enabled ---------------------------"
-    cmake -DCMAKE_BUILD_TYPE=Release -DUSE_PI_ZERO=ON ..
+    cmake -DCMAKE_BUILD_TYPE=Release -DUSE_PI_ZERO=ON -DUSE_WEBSOCKET=ON -DJUST_INSTALL_CEREAL=ON ..
 fi
 make
 if [ $platform == "linux-rpi" ];
@@ -122,6 +140,7 @@ echo -e "[ \033[1m\033[96mpink\033[m ] Update device configuration -------------
 if [ $platform == "linux-rpi" ];
   then
     sudo cp --backup=numbered support/hostapd.conf /etc/hostapd/.
+    sudo cp -r support/html/* /var/www/html/.
 fi
 
 echo ""

@@ -76,9 +76,9 @@ resetUI = function()
   {
       document.getElementById("value-multipliers").remove(i);
   }
-  slider_tempo.setValue(defaultTempo);
+  slider_tempo.setValue(defaultTempo, false);
   slider_tempo.disable();
-  slider_loopLength.setValue(defaultLoopLength);
+  slider_loopLength.setValue(defaultLoopLength, false);
   slider_loopLength.disable();
   document.getElementById("led-playing").classList.add("led-disabled");
   document.getElementById("led-enabled").classList.add("led-disabled");
@@ -118,12 +118,12 @@ createSocket = function()
         {
           document.getElementById("value-tempo").classList.remove("temporary-value");
           document.getElementById("value-tempo").value = roundTwoDecimalDigits(result['tempo']) + " bpm";
-          slider_tempo.setValue(result['tempo']);
+          slider_tempo.setValue(result['tempo'], false);
         }
         else if(result.hasOwnProperty('loopLength'))
         {
           document.getElementById("value-loopLength").classList.remove("temporary-value");
-          slider_loopLength.setValue(result['loopLength']);
+          slider_loopLength.setValue(result['loopLength'], false);
           if(result['loopLength'] == 1)
           {
             document.getElementById("value-loopLength").value = roundTwoDecimalDigits(result['loopLength']) + " bar";

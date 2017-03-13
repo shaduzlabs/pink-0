@@ -224,7 +224,6 @@ void UserInterfaceWebSocket::onMessageReceived(std::string message_)
 
   try
   {
-
     std::istringstream inputStream(message_);
     {
       cereal::JSONInputArchive archive(inputStream);

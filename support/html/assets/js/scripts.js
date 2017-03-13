@@ -118,10 +118,12 @@ createSocket = function()
         {
           document.getElementById("value-tempo").classList.remove("temporary-value");
           document.getElementById("value-tempo").value = roundTwoDecimalDigits(result['tempo']) + " bpm";
+          slider_tempo.setValue(result['tempo']);
         }
         else if(result.hasOwnProperty('loopLength'))
         {
           document.getElementById("value-loopLength").classList.remove("temporary-value");
+          slider_loopLength.setValue(result['loopLength']);
           if(result['loopLength'] == 1)
           {
             document.getElementById("value-loopLength").value = roundTwoDecimalDigits(result['loopLength']) + " bar";

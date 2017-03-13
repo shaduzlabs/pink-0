@@ -71,9 +71,8 @@ if [ $platform == "osx" ];
   then
     brew install cmake
   else
-    echo a
-#    sudo apt-get update
-#    sudo apt-get install -y --force-yes cmake wiringpi
+    sudo apt-get update
+    sudo apt-get install -y --force-yes cmake wiringpi
 fi
 
 echo ""
@@ -82,19 +81,18 @@ echo ""
 echo -e "[ \033[1m\033[96mpink\033[m ] Install RaspAP --------------------------------------------------------"
 if [ $platform == "linux-rpi" ];
   then
-    echo a
-#    wget -q https://git.io/vDr0i -O /tmp/raspap && bash /tmp/raspap
+    wget -q https://git.io/vDr0i -O /tmp/raspap && bash /tmp/raspap
 fi
 
 echo ""
 echo ""
 echo ""
 echo -e "[ \033[1m\033[96mpink\033[m ] Build and install portaudio -------------------------------------------"
-#cd modules/portaudio
-#./configure --with-alsa --without-oss --without-jack
-#make
-#sudo make install
-#cd ../../
+cd modules/portaudio
+./configure --with-alsa --without-oss --without-jack
+make
+sudo make install
+cd ../../
 echo a
 
 echo ""

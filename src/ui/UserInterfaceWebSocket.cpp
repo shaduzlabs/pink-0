@@ -7,6 +7,8 @@
 
 #include "ui/UserInterfaceWebSocket.h"
 
+#include <pink-config.h>
+
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
@@ -25,6 +27,7 @@ struct Command
     togglePlay,
     isEnabled,
     isPlaying,
+    getVersion,
     getTempo,
     getLoopLength,
     getMultiplierIndex,
@@ -60,6 +63,10 @@ struct Command
     if (command == "isPlaying")
     {
       return Type::isPlaying;
+    }
+    else if (command == "getVersion")
+    {
+      return Type::getVersion;
     }
     else if (command == "getTempo")
     {
@@ -253,6 +260,19 @@ void UserInterfaceWebSocket::onMessageReceived(std::string message_)
         cereal::JSONOutputArchive archive(ss);
         auto playing = m_pink->isPlaying();
         archive(CEREAL_NVP(playing));
+      }
+      m_wsServer.send(ss.str());
+      break;
+    }
+    case Command::Type::getVersion:
+    {
+      {
+        cereal::JSONOutputArchive archive(ss);
+        auto version = std::string(
+          std::to_string(PINK_VERSION_MAJOR) + "." + std::to_string(PINK_VERSION_MINOR) + "."
+          + std::to_string(PINK_VERSION_MICRO));
+
+        archive(CEREAL_NVP(version));
       }
       m_wsServer.send(ss.str());
       break;

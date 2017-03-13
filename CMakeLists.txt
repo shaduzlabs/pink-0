@@ -183,7 +183,7 @@ if(USE_WEBSOCKET)
   target_compile_definitions(pink PRIVATE UI_USE_WEBSOCKET)
 endif()
 
-target_include_directories( pink PRIVATE src /usr/include /usr/local/include)
+target_include_directories( pink PRIVATE src ${PINK_BUILD_DIR} /usr/include /usr/local/include)
 
 if(APPLE)
   target_link_libraries( pink PRIVATE "-framework CoreServices" "-framework CoreFoundation" "-framework AudioUnit" "-framework AudioToolbox" "-framework CoreAudio" Ableton::Link)

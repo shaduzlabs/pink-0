@@ -27,6 +27,9 @@ shaduzlabs.com #####*/
 #include "Pink.h"
 
 #include "ui/UserInterfaceNone.h"
+#ifdef UI_USE_WEBSOCKET
+#include "ui/UserInterfaceWebSocket.h"
+#endif
 #ifdef UI_USE_RASPBERRY_PI_ZERO
 #include "ui/UserInterfacePiZero.h"
 #endif
@@ -45,7 +48,10 @@ int pidFilehandle;
 
 #ifdef __linux__
 
-void daemonShutdown() { close(pidFilehandle); }
+void daemonShutdown()
+{
+  close(pidFilehandle);
+}
 
 #endif // __linux__
 
@@ -53,20 +59,22 @@ void daemonShutdown() { close(pidFilehandle); }
 
 #ifdef __linux__
 
-void signalHandler(int sig) {
-  switch (sig) {
-  case SIGHUP:
-    syslog(LOG_WARNING, "Received SIGHUP signal.");
-    break;
-  case SIGINT:
-  case SIGTERM:
-    syslog(LOG_INFO, "Daemon exiting");
-    daemonShutdown();
-    exit(EXIT_SUCCESS);
-    break;
-  default:
-    syslog(LOG_WARNING, "Unhandled signal %s", strsignal(sig));
-    break;
+void signalHandler(int sig)
+{
+  switch (sig)
+  {
+    case SIGHUP:
+      syslog(LOG_WARNING, "Received SIGHUP signal.");
+      break;
+    case SIGINT:
+    case SIGTERM:
+      syslog(LOG_INFO, "Daemon exiting");
+      daemonShutdown();
+      exit(EXIT_SUCCESS);
+      break;
+    default:
+      syslog(LOG_WARNING, "Unhandled signal %s", strsignal(sig));
+      break;
   }
 }
 
@@ -74,7 +82,8 @@ void signalHandler(int sig) {
 
 //--------------------------------------------------------------------------------------------------
 
-static void daemonize(const char *runDir_, const char *pidFile_) {
+static void daemonize(const char* runDir_, const char* pidFile_)
+{
 #ifndef __linux__
   std::ignore = runDir_;
   std::ignore = pidFile_;
@@ -87,19 +96,18 @@ static void daemonize(const char *runDir_, const char *pidFile_) {
   sigset_t newSigSet;
 
   /* Check if parent process id is set */
-  if (getppid() == 1) {
+  if (getppid() == 1)
+  {
     /* PPID exists, therefore we are already a daemon */
     return;
   }
 
   sigemptyset(&newSigSet);
-  sigaddset(&newSigSet,
-            SIGCHLD); /* ignore child - i.e. we don't need to wait for it */
-  sigaddset(&newSigSet, SIGTSTP); /* ignore Tty stop signals */
-  sigaddset(&newSigSet, SIGTTOU); /* ignore Tty background writes */
-  sigaddset(&newSigSet, SIGTTIN); /* ignore Tty background reads */
-  sigprocmask(SIG_BLOCK, &newSigSet,
-              NULL); /* Block the above specified signals */
+  sigaddset(&newSigSet, SIGCHLD);           /* ignore child - i.e. we don't need to wait for it */
+  sigaddset(&newSigSet, SIGTSTP);           /* ignore Tty stop signals */
+  sigaddset(&newSigSet, SIGTTOU);           /* ignore Tty background writes */
+  sigaddset(&newSigSet, SIGTTIN);           /* ignore Tty background reads */
+  sigprocmask(SIG_BLOCK, &newSigSet, NULL); /* Block the above specified signals */
 
   /* Set up a signal handler */
   newSigAction.sa_handler = signalHandler;
@@ -113,11 +121,13 @@ static void daemonize(const char *runDir_, const char *pidFile_) {
 
   /* Fork off the parent process */
   pid = fork();
-  if (pid < 0) {
+  if (pid < 0)
+  {
     exit(EXIT_FAILURE);
   }
   /* If we got a good PID, then we can exit the parent process. */
-  if (pid > 0) {
+  if (pid > 0)
+  {
     exit(EXIT_SUCCESS);
   }
 
@@ -126,14 +136,16 @@ static void daemonize(const char *runDir_, const char *pidFile_) {
 
   /* Create a new SID for the child process */
   sid = setsid();
-  if (sid < 0) {
+  if (sid < 0)
+  {
     /* Log the failure */
     syslog(LOG_ERR, "ERROR: Failed to create a new session");
     exit(EXIT_FAILURE);
   }
 
   /* Close out the open file descriptors */
-  for (int fd = sysconf(_SC_OPEN_MAX); fd > 0; fd--) {
+  for (int fd = sysconf(_SC_OPEN_MAX); fd > 0; fd--)
+  {
     close(fd);
   }
 
@@ -148,23 +160,25 @@ static void daemonize(const char *runDir_, const char *pidFile_) {
   /* STDERR */
   dup(i);
 
-  if ((chdir(runDir_)) < 0) {
-    syslog(LOG_ERR, "ERROR: Failed to change the working directory to %s",
-           runDir_);
+  if ((chdir(runDir_)) < 0)
+  {
+    syslog(LOG_ERR, "ERROR: Failed to change the working directory to %s", runDir_);
     exit(EXIT_FAILURE);
   }
 
   /* Ensure only one copy */
   pidFilehandle = open(pidFile_, O_RDWR | O_CREAT, 0600);
 
-  if (pidFilehandle == -1) {
+  if (pidFilehandle == -1)
+  {
     /* Couldn't open lock file */
     syslog(LOG_INFO, "Could not open PID lock file %s, exiting", pidFile_);
     exit(EXIT_FAILURE);
   }
 
   /* Try to lock file */
-  if (lockf(pidFilehandle, F_TLOCK, 0) == -1) {
+  if (lockf(pidFilehandle, F_TLOCK, 0) == -1)
+  {
     /* Couldn't get lock on lock file */
     syslog(LOG_INFO, "Could not lock PID lock file %s, exiting", pidFile_);
     exit(EXIT_FAILURE);
@@ -180,21 +194,25 @@ static void daemonize(const char *runDir_, const char *pidFile_) {
 
 //--------------------------------------------------------------------------------------------------
 
-class ScopedLog {
+class ScopedLog
+{
 public:
-  ScopedLog() {
+  ScopedLog()
+  {
 #ifdef __linux__
     setlogmask(LOG_UPTO(LOG_INFO));
     openlog(DAEMON_NAME, LOG_CONS | LOG_PERROR, LOG_USER);
 #endif // __linux__
   }
-  ~ScopedLog() {
+  ~ScopedLog()
+  {
 #ifdef __linux__
     closelog();
 #endif // __linux__
   }
 
-  void info(const char *message_) {
+  void info(const char* message_)
+  {
 #ifdef __linux__
     syslog(LOG_INFO, message_);
 #else
@@ -202,7 +220,8 @@ public:
 #endif
   }
 
-  void exception(const std::exception &e_) {
+  void exception(const std::exception& e_)
+  {
 #ifdef __linux__
     syslog(LOG_ERR, "ERROR: An exception occurred  (%s)", e_.what());
 #else
@@ -216,7 +235,8 @@ public:
 using namespace sl;
 using namespace sl::pi;
 
-int main(int, char **) {
+int main(int, char**)
+{
   ScopedLog log;
 
   log.info("daemon starting");
@@ -224,19 +244,27 @@ int main(int, char **) {
 
   std::shared_ptr<Pink> pink(new Pink(120., 4., 1.0));
 
+#ifdef UI_USE_WEBSOCKET
+  UserInterfaceWebSocket webSocket(pink);
+#endif
 #ifdef UI_USE_RASPBERRY_PI_ZERO
   UserInterfacePiZero zero(pink);
-#else
+#endif
+#if !defined(UI_USE_RASPBERRY_PI_ZERO) && !defined(UI_USE_WEBSOCKET)
   UserInterfaceNone zero(pink);
 #endif
 
   log.info("daemon running");
 
-  try {
-    while (true) {
+  try
+  {
+    while (true)
+    {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception& e)
+  {
     log.exception(e);
   }
 

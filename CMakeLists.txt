@@ -10,8 +10,10 @@ project (pink)
 
 set(PINK_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(PINK_BUILD_DIR ${CMAKE_BINARY_DIR})
+set(PINK_MODULES_DIR ${PINK_ROOT_DIR}/modules)
 
 option(USE_PI_ZERO "Use RaspberryPI Zero shield as user interface" ON)
+option(USE_WEBSOCKET "Use the WebSocket based user interface" ON)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
   set(IS_PINK ON)
@@ -44,8 +46,8 @@ endif()
 string(TIMESTAMP PINK_BUILD_DATE "%Y-%m-%d")
 
 set (PINK_VERSION_MAJOR 0)
-set (PINK_VERSION_MINOR 0)
-set (PINK_VERSION_MICRO 2)
+set (PINK_VERSION_MINOR 1)
+set (PINK_VERSION_MICRO 0)
 set (PINK_VERSION_STRING "${PINK_VERSION_MAJOR}.${PINK_VERSION_MINOR}.${PINK_VERSION_MICRO}")
 
 if($ENV{APPVEYOR})
@@ -110,7 +112,11 @@ message( STATUS "[${PINK_BUILD_DATE}] ${PINK_BUILD_DESCRIPTION} ")
 
 # Dependencies ----------------------------------------------------------------------------------- #
 
-include(modules/link/AbletonLinkConfig.cmake)
+include(${PINK_MODULES_DIR}/link/AbletonLinkConfig.cmake)
+add_subdirectory(${PINK_MODULES_DIR}/nmws)
+
+set(JUST_INSTALL_CEREAL ON)
+add_subdirectory(${PINK_MODULES_DIR}/cereal)
 
 
 # Source files ----------------------------------------------------------------------------------- #
@@ -118,15 +124,31 @@ include(modules/link/AbletonLinkConfig.cmake)
 set(
   src_ui_SRCS
     src/ui/UserInterface.h
-    src/ui/UserInterfaceNone.h
 )
 
 if(USE_PI_ZERO)
   message("   Raspberry PI Zero user interface enabled")
   set(
-    src_ui_SRCS
+    src_ui_zero_SRCS
       src/ui/UserInterfacePiZero.cpp
       src/ui/UserInterfacePiZero.h
+  )
+endif()
+
+
+if(USE_WEBSOCKET)
+  message("   WebSocket user interface enabled")
+  set(
+    src_ui_ws_SRCS
+      src/ui/UserInterfaceWebSocket.cpp
+      src/ui/UserInterfaceWebSocket.h
+  )
+endif()
+
+if(NOT(USE_WEBSOCKET) AND NOT(USE_PI_ZERO))
+  set(
+    src_ui_none_SRCS
+      src/ui/UserInterfaceNone.h
   )
 endif()
 
@@ -145,6 +167,9 @@ set(
   PINK_SRCS
     ${src_SRCS}
     ${src_ui_SRCS}
+    ${src_ui_zero_SRCS}
+    ${src_ui_ws_SRCS}
+    ${src_ui_none_SRCS}
 )
 
 add_executable( ${PROJECT_NAME} ${PINK_SRCS} )
@@ -153,8 +178,12 @@ set_target_properties( pink PROPERTIES OUTPUT_NAME pinkd)
 if(USE_PI_ZERO)
   target_compile_definitions(pink PRIVATE UI_USE_RASPBERRY_PI_ZERO)
 endif()
+if(USE_WEBSOCKET)
+  target_link_libraries( pink PRIVATE cereal nmws)
+  target_compile_definitions(pink PRIVATE UI_USE_WEBSOCKET)
+endif()
 
-target_include_directories( pink PRIVATE /usr/include/ /usr/local/include)
+target_include_directories( pink PRIVATE src ${PINK_BUILD_DIR} /usr/include /usr/local/include)
 
 if(APPLE)
   target_link_libraries( pink PRIVATE "-framework CoreServices" "-framework CoreFoundation" "-framework AudioUnit" "-framework AudioToolbox" "-framework CoreAudio" Ableton::Link)
@@ -162,6 +191,7 @@ if(APPLE)
 else()
   target_link_libraries( pink PRIVATE portaudio wiringPi Ableton::Link pthread)
 endif()
+
 
 # Install ---------------------------------------------------------------------------------------- #
 

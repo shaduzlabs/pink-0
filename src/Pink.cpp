@@ -46,6 +46,7 @@ static sl::pi::Pink::ClockMultipliers k_clockMultipliers{{1 / 64., "1/64"},
 // -------------------------------------------------------------------------------------------------
 
 const std::size_t kListenerIdLength{16};
+const std::string kEmptyString = "";
 
 // -------------------------------------------------------------------------------------------------
 
@@ -115,10 +116,47 @@ Pink::Pink(double tempo_, double length_, double clockMultiplier_) : m_link(temp
 
 // -------------------------------------------------------------------------------------------------
 
+bool Pink::isEnabled() const
+{
+  return m_link.isEnabled();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+void Pink::setEnabled(bool enabled_)
+{
+  std::lock_guard<std::mutex> lock(m_mtxRunning);
+  m_link.enable(enabled_);
+
+  for (const auto& l : m_listeners)
+  {
+    auto listener = l.second;
+    if (listener == nullptr)
+    {
+      continue;
+    }
+
+    listener->statusChanged(m_link.isEnabled());
+    if (!m_link.isEnabled() && m_audio.engine().isPlaying())
+    {
+      m_audio.engine().stopPlaying();
+      listener->runStatusChanged(m_audio.engine().isPlaying());
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
 void Pink::togglePlay()
 {
   std::lock_guard<std::mutex> lock(m_mtxRunning);
-  if (m_audio.engine().isPlaying())
+  if (!m_link.isEnabled())
+  {
+    return;
+  }
+  
+  bool playing = m_audio.engine().isPlaying();
+  if (playing)
   {
     m_audio.engine().stopPlaying();
   }
@@ -134,7 +172,7 @@ void Pink::togglePlay()
     {
       continue;
     }
-    listener->runStatusChanged(m_audio.engine().isPlaying());
+    listener->runStatusChanged(!playing);
   }
 }
 
@@ -231,6 +269,17 @@ const std::string& Pink::clockMultiplierLabel() const
 
 // -------------------------------------------------------------------------------------------------
 
+const std::string& Pink::clockMultiplierLabel(std::size_t index_) const
+{
+  if (index_ < k_clockMultipliers.size())
+  {
+    return k_clockMultipliers[index_].label;
+  }
+  return kEmptyString;
+}
+
+// -------------------------------------------------------------------------------------------------
+
 void Pink::setClockMultiplierIndex(std::size_t index_)
 {
   if (index_ < k_clockMultipliers.size())
@@ -247,6 +296,13 @@ void Pink::setClockMultiplierIndex(std::size_t index_)
       listener->clockMultiplierChanged(k_clockMultipliers[m_currentClockMultiplier].label);
     }
   }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+std::size_t Pink::numPeers() const
+{
+  return m_link.numPeers();
 }
 
 // -------------------------------------------------------------------------------------------------

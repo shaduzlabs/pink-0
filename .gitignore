@@ -4,7 +4,6 @@
 /output/
 /logs/
 .idea/*
-modules/
 
 # System temporary files
 .DS_Store

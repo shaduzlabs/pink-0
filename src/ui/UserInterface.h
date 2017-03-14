@@ -24,36 +24,17 @@ namespace pi
 class UserInterface : public Pink::Listener
 {
 public:
-  enum class DisplayState
-  {
-    tempo,
-    length,
-    ppqn,
-    peers,
-  };
-
   using tCallbackEncoderChanged = std::function<void(bool, bool)>;
   using tCallbackButtonPressed = std::function<void()>;
 
-  UserInterface(std::shared_ptr<Pink> pink_) : m_pink(pink_) {
+  UserInterface(std::shared_ptr<Pink> pink_) : m_pink(pink_)
+  {
     m_pink->addListener(pinkListenerId(), this);
   }
 
   ~UserInterface() override
   {
     m_pink->removeListener(pinkListenerId());
-  }
-
-  virtual void display(int /*value_*/)
-  {
-  }
-
-  virtual void display(double /*value_*/)
-  {
-  }
-
-  virtual void display(const std::string& /*value_*/)
-  {
   }
 
 protected:

@@ -1,0 +1,131 @@
+body
+{
+  background: #f0e0e0;
+}
+.wrapper
+{
+  padding:10px;
+  padding-top:1px;
+  margin:0 auto;
+  width: 338px;
+  height: 370px;
+  background: #fff;
+}
+#value-version
+{
+  font-size:9px;
+  font-weight:normal;
+  vertical-align: super;
+  margin-left:4px;
+}
+
+.led
+{
+  float:left;
+  margin:1px;
+}
+
+#led-connected
+{
+  margin-top:6px;
+  width:48px;
+  height:32px;
+  background: url(../img/connection-broken.png);
+  font-weight:normal;
+  font-size:13px;
+  text-align:center;
+  padding-top:16px;
+  color:#000;
+}
+#led-connected.led-active
+{
+  background: url(../img/connection-established.png);
+}
+
+#led-enabled
+{
+  cursor:pointer;
+  width:32px;
+  height:32px;
+  background: url(../img/link-disabled.png);
+}
+#led-enabled.led-active
+{
+  background: url(../img/link-enabled.png)
+}
+#value-numPeers
+{
+  display:inline-block;
+  float:left;
+  width:6px;
+  padding-left:3px;
+  color:#000;
+  padding-top:0px;
+  margin-top:-6px;
+}
+#led-playing
+{
+  cursor:pointer;
+  width:32px;
+  height:32px;
+  background: url(../img/play-disabled.png)
+}
+#led-playing.led-active
+{
+  background: url(../img/play-enabled.png)
+}
+#led-playing.led-disabled
+{
+  cursor:default;
+}
+label.siimple-label
+{
+  font-weight:normal;
+}
+div.toolbar
+{
+  display:block;
+  clear:both;
+  height:50px;
+}
+div.content
+{
+  padding-left:51px;
+}
+.siimple-input, .siimple-label
+{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+input.siimple-input
+{
+  background:#fff;
+  border: 1px solid #fff;
+  margin-top:-10px;
+  margin-left:-4px;
+}
+input.siimple-input.temporary-value
+{
+border: 1px dashed #999;
+}
+input.siimple-input#value-tempo
+{
+    width:90px;
+}
+.siimple-label
+{
+  padding-top:30px;
+}
+input.siimple-input#value-loopLength
+{
+  width:70px;
+}
+.control
+{
+  height:70px;
+}

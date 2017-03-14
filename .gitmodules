@@ -4,3 +4,12 @@
 [submodule "modules/portaudio"]
 	path = modules/portaudio
 	url = https://git.assembla.com/portaudio.git
+[submodule "modules/nmws"]
+	path = modules/nmws
+	url = https://www.github.com/shaduzlabs/nmws.git
+[submodule "modules/cereal"]
+	path = modules/cereal
+	url = https://github.com/USCiLab/cereal.git
+[submodule "modules/nanomsg"]
+	path = modules/nanomsg
+	url = https://github.com/nanomsg/nanomsg.git

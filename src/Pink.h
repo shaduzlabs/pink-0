@@ -40,6 +40,9 @@ public:
 
   Pink(double /*tempo_*/, double /*length_*/, double /*clockMultiplier_*/);
 
+  bool isEnabled() const;
+  void setEnabled(bool /*enabled_*/);
+
   void togglePlay();
   bool isPlaying();
 
@@ -52,7 +55,10 @@ public:
   std::size_t numClockMultipliers() const;
   std::size_t clockMultiplierIndex() const;
   const std::string& clockMultiplierLabel() const;
+  const std::string& clockMultiplierLabel(std::size_t /*index_*/) const;
   void setClockMultiplierIndex(std::size_t /*index_*/);
+
+  std::size_t numPeers() const;
 
   class Listener
   {
@@ -65,6 +71,7 @@ public:
     {
       return m_id;
     }
+    virtual void statusChanged(bool /*enabled_*/) = 0;
     virtual void tempoChanged(double /*t_*/) = 0;
     virtual void loopLengthChanged(double /*l_*/) = 0;
     virtual void numPeersChanged(std::size_t /*n_*/) = 0;

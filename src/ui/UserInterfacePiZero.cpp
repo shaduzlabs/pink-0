@@ -383,7 +383,7 @@ void UserInterfacePiZero::registerCallbacks()
 
       case DisplayState::length:
       {
-        float step = 0.5 * (clockwise_ ? 1. : -1.);
+        float step = 0.25 * (clockwise_ ? 1. : -1.);
         auto loopLength = m_pink->loopLength() + step;
         if (loopLength > 0.)
         {
@@ -469,6 +469,8 @@ void UserInterfacePiZero::hardwareIO()
     std::this_thread::sleep_for(std::chrono::microseconds(kDisplayRefreshPeriodUs));
   }
 }
+
+// -------------------------------------------------------------------------------------------------
 
 void UserInterfacePiZero::updateUI()
 {

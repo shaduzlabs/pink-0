@@ -193,6 +193,7 @@ if(USE_RTAUDIO)
   endif()
 else()
   target_link_libraries( pink PRIVATE portaudio)
+  target_include_directories( pink PRIVATE ${PINK_MODULES_DIR}/rtaudio)
 endif()
 
 target_include_directories( pink PRIVATE src ${PINK_BUILD_DIR} /usr/include /usr/local/include)

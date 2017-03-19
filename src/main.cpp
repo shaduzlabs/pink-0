@@ -235,12 +235,15 @@ public:
 using namespace sl;
 using namespace sl::pi;
 
-int main(int, char**)
+int main(int argc_, char* argv_[])
 {
   ScopedLog log;
 
   log.info("daemon starting");
-  daemonize("/tmp/", "/var/run/pinkd.pid");
+  if (argc_ != 2 || std::string(argv_[1]) != "no-daemon")
+  {
+    daemonize("/tmp/", "/var/run/pinkd.pid");
+  }
 
   std::shared_ptr<Pink> pink(new Pink(120., 4., 1.0));
 

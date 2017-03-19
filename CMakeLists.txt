@@ -14,6 +14,7 @@ set(PINK_MODULES_DIR ${PINK_ROOT_DIR}/modules)
 
 option(USE_PI_ZERO "Use RaspberryPI Zero shield as user interface" ON)
 option(USE_WEBSOCKET "Use the WebSocket based user interface" ON)
+option(USE_RTAUDIO "Use the RtAudio as audio backend instead of portaudio" OFF)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
   set(IS_PINK ON)
@@ -182,6 +183,13 @@ if(USE_WEBSOCKET)
   target_link_libraries( pink PRIVATE cereal nmws)
   target_compile_definitions(pink PRIVATE UI_USE_WEBSOCKET)
 endif()
+if(USE_RTAUDIO)
+  add_subdirectory(${PINK_MODULES_DIR}/rtaudio)
+  target_compile_definitions(pink PRIVATE AUDIO_USE_RTAUDIO)
+  target_link_libraries( pink PRIVATE rtaudio_static)
+else()
+  target_link_libraries( pink PRIVATE portaudio)
+endif()
 
 target_include_directories( pink PRIVATE src ${PINK_BUILD_DIR} /usr/include /usr/local/include)
 
@@ -189,7 +197,11 @@ if(APPLE)
   target_link_libraries( pink PRIVATE "-framework CoreServices" "-framework CoreFoundation" "-framework AudioUnit" "-framework AudioToolbox" "-framework CoreAudio" Ableton::Link)
   target_link_libraries( pink PRIVATE /usr/local/lib/libportaudio.a)
 else()
-  target_link_libraries( pink PRIVATE portaudio wiringPi Ableton::Link pthread)
+  if(USE_PI_ZERO)
+    target_link_libraries( pink PRIVATE wiringPi)
+  endif()
+
+  target_link_libraries( pink PRIVATE Ableton::Link pthread)
 endif()
 
 

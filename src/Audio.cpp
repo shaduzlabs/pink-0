@@ -14,8 +14,8 @@
 
 namespace
 {
-const double k_sampleRate{11025.};
-const std::size_t k_bufferSize{256};
+const double k_sampleRate{44100.};
+const std::size_t k_bufferSize{128};
 }
 // -------------------------------------------------------------------------------------------------
 
@@ -33,9 +33,12 @@ Audio::Audio(ableton::Link& link) : m_engine(link), m_sampleTime(0.)
   initialize();
   start();
 
-  int numDevices;
+#ifdef AUDIO_USE_RTAUDIO
+  int numDevices = m_audioDevice.getDeviceCount();
+#else
+  int numDevices = Pa_GetDeviceCount();
+#endif
 
-  numDevices = Pa_GetDeviceCount();
   if (numDevices < 0)
   {
     throw std::runtime_error("ERROR: Pa_CountDevices returned " + std::to_string(numDevices));
@@ -52,7 +55,45 @@ Audio::~Audio()
 
 // -------------------------------------------------------------------------------------------------
 
-int Audio::audioCallback(const void* /*inputBuffer*/,
+#ifdef AUDIO_USE_RTAUDIO
+int Audio::audioCallbackRTA(void* outputBuffer,
+  void* inputBuffer,
+  unsigned int nBufferFrames,
+  double streamTime,
+  RtAudioStreamStatus status,
+  void* userData)
+{
+
+  using namespace std::chrono;
+  float* buffer = static_cast<float*>(outputBuffer);
+  Audio& platform = *static_cast<Audio*>(userData);
+  Engine& engine = platform.m_engine;
+
+  const auto hostTime = platform.m_hostTimeFilter.sampleTimeToHostTime(platform.m_sampleTime);
+
+  platform.m_sampleTime += nBufferFrames;
+
+  const auto bufferBeginAtOutput = hostTime + engine.outputLatency();
+
+  engine.process(bufferBeginAtOutput, nBufferFrames);
+
+  const auto& bufferReset = engine.bufferReset();
+  const auto& bufferClock = engine.bufferClock();
+
+  unsigned long i = 0;
+  for (; i < nBufferFrames; ++i)
+  {
+    buffer[i * 2] = bufferReset[i];
+    buffer[i * 2 + 1] = bufferClock[i];
+  }
+
+  return 0;
+}
+
+#else
+// -------------------------------------------------------------------------------------------------
+
+int Audio::audioCallbackPA(const void* /*inputBuffer*/,
   void* outputBuffer,
   unsigned long inNumFrames,
   const PaStreamCallbackTimeInfo* /*timeInfo*/,
@@ -82,11 +123,43 @@ int Audio::audioCallback(const void* /*inputBuffer*/,
 
   return paContinue;
 }
+#endif
 
 // -------------------------------------------------------------------------------------------------
 
 void Audio::initialize()
 {
+#ifdef AUDIO_USE_RTAUDIO
+
+  if (m_audioDevice.getDeviceCount() < 1)
+  {
+    std::cerr << "No audio interfaces found" << std::endl;
+    std::terminate();
+  }
+
+  try
+  {
+    m_audioStreamParameters.deviceId = m_audioDevice.getDefaultOutputDevice();
+    m_audioStreamParameters.nChannels = 2;
+    m_audioStreamParameters.firstChannel = 0;
+    m_audioBufferSize = m_engine.bufferSize() / 2;
+
+    RtAudio::DeviceInfo deviceInfo
+      = m_audioDevice.getDeviceInfo(m_audioDevice.getDefaultOutputDevice());
+    m_audioDevice.openStream(&m_audioStreamParameters,
+      NULL,
+      RTAUDIO_FLOAT32,
+      static_cast<unsigned>(m_engine.sampleRate()),
+      &m_audioBufferSize,
+      &Audio::audioCallbackRTA,
+      this);
+  }
+  catch (RtAudioError e)
+  {
+    std::cerr << "Could not initialize Audio Engine. " << e.getMessage() << std::endl;
+    std::terminate();
+  }
+#else
   PaError result = Pa_Initialize();
   if (result)
   {
@@ -113,7 +186,7 @@ void Audio::initialize()
     m_engine.sampleRate(),
     m_engine.bufferSize(),
     paClipOff,
-    &audioCallback,
+    &audioCallbackPA,
     this);
 
   if (result)
@@ -125,12 +198,24 @@ void Audio::initialize()
   {
     throw std::runtime_error("No valid audio stream.");
   }
+#endif
 }
 
 // -------------------------------------------------------------------------------------------------
 
 void Audio::uninitialize()
 {
+#ifdef AUDIO_USE_RTAUDIO
+  try
+  {
+    m_audioDevice.closeStream();
+  }
+  catch (RtAudioError e)
+  {
+    std::cerr << "Could not close Audio Stream. " << e.getMessage() << std::endl;
+    std::terminate();
+  }
+#else
   PaError result = Pa_CloseStream(m_stream);
   if (result)
   {
@@ -142,23 +227,47 @@ void Audio::uninitialize()
   {
     throw std::runtime_error("No valid audio stream.");
   }
+#endif
 }
 
 // -------------------------------------------------------------------------------------------------
 
 void Audio::start()
 {
+#ifdef AUDIO_USE_RTAUDIO
+  try
+  {
+    m_audioDevice.startStream();
+  }
+  catch (RtAudioError e)
+  {
+    std::cerr << "Could not start Audio Stream. " << e.getMessage() << std::endl;
+    std::terminate();
+  }
+#else
   PaError result = Pa_StartStream(m_stream);
   if (result)
   {
     throw std::runtime_error("Could not start Audio Stream. (" + std::to_string(result) + ")");
   }
+#endif
 }
 
 // -------------------------------------------------------------------------------------------------
 
 void Audio::stop()
 {
+#ifdef AUDIO_USE_RTAUDIO
+  try
+  {
+    m_audioDevice.stopStream();
+  }
+  catch (RtAudioError e)
+  {
+    std::cerr << "Could not start Audio Stream. " << e.getMessage() << std::endl;
+    std::terminate();
+  }
+#else
   if (m_stream == nullptr)
   {
     return;
@@ -169,6 +278,7 @@ void Audio::stop()
   {
     throw std::runtime_error("Could not stop Audio Stream. (" + std::to_string(result) + ")");
   }
+#endif
 }
 
 // -------------------------------------------------------------------------------------------------

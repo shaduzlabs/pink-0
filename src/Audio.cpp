@@ -15,12 +15,11 @@
 namespace
 {
 #ifdef AUDIO_USE_RTAUDIO
-const double k_sampleRate{44100.};
-const std::size_t k_bufferSize{128};
+const double k_sampleRate{22050.};
 #else
 const double k_sampleRate{11025.};
-const std::size_t k_bufferSize{256};
 #endif
+const std::size_t k_bufferSize{256};
 }
 // -------------------------------------------------------------------------------------------------
 

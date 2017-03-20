@@ -13,6 +13,7 @@ set(PINK_BUILD_DIR ${CMAKE_BINARY_DIR})
 set(PINK_MODULES_DIR ${PINK_ROOT_DIR}/modules)
 
 option(USE_PI_ZERO "Use RaspberryPI Zero shield as user interface" ON)
+option(USE_CHIP_PRO "Use C.H.I.P. Pro shield as user interface" ON)
 option(USE_WEBSOCKET "Use the WebSocket based user interface" ON)
 option(USE_RTAUDIO "Use the RtAudio as audio backend instead of portaudio" OFF)
 
@@ -136,6 +137,15 @@ if(USE_PI_ZERO)
   )
 endif()
 
+if(USE_CHIP_PRO)
+  message("   C.H.I.P. Pro user interface enabled")
+  set(
+    src_ui_chippro_SRCS
+      src/ui/UserInterfaceCHIPPro.cpp
+      src/ui/UserInterfaceCHIPPro.h
+  )
+endif()
+
 
 if(USE_WEBSOCKET)
   message("   WebSocket user interface enabled")
@@ -169,6 +179,7 @@ set(
     ${src_SRCS}
     ${src_ui_SRCS}
     ${src_ui_zero_SRCS}
+    ${src_ui_chippro_SRCS}
     ${src_ui_ws_SRCS}
     ${src_ui_none_SRCS}
 )
@@ -178,6 +189,9 @@ set_target_properties( pink PROPERTIES OUTPUT_NAME pinkd)
 
 if(USE_PI_ZERO)
   target_compile_definitions(pink PRIVATE UI_USE_RASPBERRY_PI_ZERO)
+endif()
+if(USE_CHIP_PRO)
+  target_compile_definitions(pink PRIVATE UI_USE_CHIP_PRO)
 endif()
 if(USE_WEBSOCKET)
   target_link_libraries( pink PRIVATE cereal nmws)

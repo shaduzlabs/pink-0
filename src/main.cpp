@@ -33,6 +33,9 @@ shaduzlabs.com #####*/
 #ifdef UI_USE_RASPBERRY_PI_ZERO
 #include "ui/UserInterfacePiZero.h"
 #endif
+#ifdef UI_USE_CHIP_PRO
+#include "ui/UserInterfaceCHIPPro.h"
+#endif
 
 #define DAEMON_NAME "pinkd"
 
@@ -250,10 +253,16 @@ int main(int argc_, char* argv_[])
 #ifdef UI_USE_WEBSOCKET
   UserInterfaceWebSocket webSocket(pink);
 #endif
+
 #ifdef UI_USE_RASPBERRY_PI_ZERO
   UserInterfacePiZero zero(pink);
 #endif
-#if !defined(UI_USE_RASPBERRY_PI_ZERO) && !defined(UI_USE_WEBSOCKET)
+
+#ifdef UI_USE_CHIP_PRO
+  UserInterfaceCHIPPro chipPro(pink);
+#endif
+
+#if !defined(UI_USE_RASPBERRY_PI_ZERO) && !defined(UI_USE_WEBSOCKET) && !defined(UI_USE_CHIP_PRO)
   UserInterfaceNone zero(pink);
 #endif
 

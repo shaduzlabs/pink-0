@@ -29,13 +29,13 @@ void initPortE(uint8_t* memoryMap_)
 {
   volatile uint32_t *pioMem32, *configRegister;
   uint32_t mask;
-  for (int pin_ = 4; i < 12; ++i)
+  for (int pin = 4; pin < 12; ++pin)
   {
     memAddress = (uint32_t*)(memoryMap_ + k_chipProPortE * 0x24);
-    configRegister = memAddress + (pin_ >> 3);
-    mask = ~(7 << ((pin_ & 7) * 4));
+    configRegister = memAddress + (pin >> 3);
+    mask = ~(7 << ((pin & 7) * 4));
     *configRegister &= mask;
-    *configRegister |= 1 << ((pin_ & 7) * 4);
+    *configRegister |= 1 << ((pin & 7) * 4);
   }
 }
 
@@ -141,7 +141,7 @@ void UserInterfaceCHIPPro::clockMultiplierChanged(const std::string& cm_)
 
 // -------------------------------------------------------------------------------------------------
 
-void setOutputPin(uint8_t pin_, bool status_)
+void UserInterfaceCHIPPro::setOutputPin(uint8_t pin_, bool status_)
 {
   if (pin_ < 8)
   {

@@ -51,11 +51,11 @@ inline void setPinPortE(uint8_t* memoryMap_, int pin_, bool status_)
   volatile uint32_t* memAddress;
   uint32_t mask;
   memAddress = (uint32_t*)(memoryMap_ + 0xA0);
-  mask = ~(1 << pin_);
+  mask = ~(1 << pin);
   *memAddress &= mask;
   if (status_)
   {
-    *memAddress |= 1 << pin_;
+    *memAddress |= 1 << pin;
   }
 }
 

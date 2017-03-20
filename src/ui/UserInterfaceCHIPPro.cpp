@@ -27,7 +27,7 @@ constexpr int k_chipProPortE = 4;
 
 void initPortE(uint8_t* memoryMap_)
 {
-  volatile uint32_t *pioMem32, *configRegister;
+  volatile uint32_t *memAddress, *configRegister;
   uint32_t mask;
   for (int pin = 4; pin < 12; ++pin)
   {
@@ -43,7 +43,7 @@ void initPortE(uint8_t* memoryMap_)
 
 inline void setPinPortE(uint8_t* memoryMap_, int pin_, bool status_)
 {
-  if (pin_ > 7 || pin < 0)
+  if (pin_ > 7 || pin_ < 0)
   {
     return;
   }

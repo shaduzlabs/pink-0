@@ -13,3 +13,6 @@
 [submodule "modules/nanomsg"]
 	path = modules/nanomsg
 	url = https://github.com/nanomsg/nanomsg.git
+[submodule "modules/rtaudio"]
+	path = modules/rtaudio
+	url = https://github.com/thestk/rtaudio.git

@@ -43,6 +43,9 @@ public:
   void clockMultiplierChanged(const std::string& /*cm_*/) override;
 
 private:
+  void setOutputPin(uint8_t pin_, bool status_);
+
+  uint8_t* m_memoryMap;
 };
 
 // -------------------------------------------------------------------------------------------------

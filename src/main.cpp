@@ -247,20 +247,22 @@ int main(int argc_, char* argv_[])
 
   std::shared_ptr<Pink> pink(new Pink(120., 4., 1.0));
 
-#ifdef UI_USE_WEBSOCKET
-  UserInterfaceWebSocket webSocket(pink);
-#endif
-#ifdef UI_USE_RASPBERRY_PI_ZERO
-  UserInterfacePiZero zero(pink);
-#endif
-#if !defined(UI_USE_RASPBERRY_PI_ZERO) && !defined(UI_USE_WEBSOCKET)
-  UserInterfaceNone zero(pink);
-#endif
-
-  log.info("daemon running");
-
   try
   {
+    std::shared_ptr<Pink> pink(new Pink(120., 4., 1.0));
+
+#ifdef UI_USE_WEBSOCKET
+    UserInterfaceWebSocket webSocket(pink);
+#endif
+#ifdef UI_USE_RASPBERRY_PI_ZERO
+    UserInterfacePiZero zero(pink);
+#endif
+#if !defined(UI_USE_RASPBERRY_PI_ZERO) && !defined(UI_USE_WEBSOCKET)
+    UserInterfaceNone zero(pink);
+#endif
+
+    log.info("daemon running");
+
     while (true)
     {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));

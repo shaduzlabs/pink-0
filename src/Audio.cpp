@@ -14,8 +14,8 @@
 
 namespace
 {
-#ifdef AUDIO_USE_RTAUDIO
-const double k_sampleRate{22050.};
+#if __APPLE__
+const double k_sampleRate{44100.};
 #else
 const double k_sampleRate{11025.};
 #endif
@@ -137,8 +137,7 @@ void Audio::initialize()
 
   if (m_audioDevice.getDeviceCount() < 1)
   {
-    std::cerr << "No audio interfaces found" << std::endl;
-    std::terminate();
+    throw std::runtime_error("No audio interfaces found");
   }
 
   try
@@ -148,6 +147,11 @@ void Audio::initialize()
     m_audioStreamParameters.firstChannel = 0;
     m_audioBufferSize = m_engine.bufferSize() / 2;
 
+
+    RtAudio::StreamOptions options;
+    options.flags = RTAUDIO_SCHEDULE_REALTIME | RTAUDIO_MINIMIZE_LATENCY | RTAUDIO_HOG_DEVICE;
+    options.numberOfBuffers = 8;
+
     RtAudio::DeviceInfo deviceInfo
       = m_audioDevice.getDeviceInfo(m_audioDevice.getDefaultOutputDevice());
     m_audioDevice.openStream(&m_audioStreamParameters,
@@ -156,12 +160,12 @@ void Audio::initialize()
       static_cast<unsigned>(m_engine.sampleRate()),
       &m_audioBufferSize,
       &Audio::audioCallbackRTA,
-      this);
+      this,
+      &options);
   }
   catch (RtAudioError e)
   {
-    std::cerr << "Could not initialize Audio Engine. " << e.getMessage() << std::endl;
-    std::terminate();
+    throw std::runtime_error(e.getMessage());
   }
 #else
   PaError result = Pa_Initialize();
@@ -216,8 +220,7 @@ void Audio::uninitialize()
   }
   catch (RtAudioError e)
   {
-    std::cerr << "Could not close Audio Stream. " << e.getMessage() << std::endl;
-    std::terminate();
+    throw std::runtime_error(e.getMessage());
   }
 #else
   PaError result = Pa_CloseStream(m_stream);
@@ -245,8 +248,7 @@ void Audio::start()
   }
   catch (RtAudioError e)
   {
-    std::cerr << "Could not start Audio Stream. " << e.getMessage() << std::endl;
-    std::terminate();
+    throw std::runtime_error(e.getMessage());
   }
 #else
   PaError result = Pa_StartStream(m_stream);
@@ -268,8 +270,7 @@ void Audio::stop()
   }
   catch (RtAudioError e)
   {
-    std::cerr << "Could not start Audio Stream. " << e.getMessage() << std::endl;
-    std::terminate();
+    throw std::runtime_error(e.getMessage());
   }
 #else
   if (m_stream == nullptr)

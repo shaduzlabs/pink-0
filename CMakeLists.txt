@@ -118,7 +118,7 @@ include(${PINK_MODULES_DIR}/link/AbletonLinkConfig.cmake)
 if(USE_WEBSOCKET)
   add_subdirectory(${PINK_MODULES_DIR}/nmws)
 
-  set(JUST_INSTALL_CEREAL ON CACHE FORCE)
+  set(JUST_INSTALL_CEREAL ON CACHE BOOL ON FORCE)
   add_subdirectory(${PINK_MODULES_DIR}/cereal)
 endif()
 

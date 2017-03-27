@@ -114,11 +114,13 @@ message( STATUS "[${PINK_BUILD_DATE}] ${PINK_BUILD_DESCRIPTION} ")
 # Dependencies ----------------------------------------------------------------------------------- #
 
 include(${PINK_MODULES_DIR}/link/AbletonLinkConfig.cmake)
-add_subdirectory(${PINK_MODULES_DIR}/nmws)
 
-set(JUST_INSTALL_CEREAL ON)
-add_subdirectory(${PINK_MODULES_DIR}/cereal)
+if(USE_WEBSOCKET)
+  add_subdirectory(${PINK_MODULES_DIR}/nmws)
 
+  set(JUST_INSTALL_CEREAL ON CACHE FORCE)
+  add_subdirectory(${PINK_MODULES_DIR}/cereal)
+endif()
 
 # Source files ----------------------------------------------------------------------------------- #
 

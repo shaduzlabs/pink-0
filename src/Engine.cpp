@@ -267,7 +267,7 @@ void Engine::renderMetronomeIntoBuffer(const Link::Timeline timeline,
       const auto secondsAfterReset = duration_cast<duration<double>>(hostTime - m_timeAtLastReset);
 
       auto phase = timeline.phaseAtTime(hostTime, quantum);
-      if (phase < m_phase)
+      if (phase < m_phase || phase == 0)
       {
         // reset!
         m_timeAtLastReset = hostTime;

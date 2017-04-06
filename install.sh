@@ -74,7 +74,7 @@ if [ $platform == "osx" ];
     brew install cmake
   else
     sudo apt-get update
-    sudo apt-get install -y --force-yes cmake wiringpi
+    sudo apt-get install -y --force-yes libasound-dev cmake wiringpi
 fi
 
 echo ""

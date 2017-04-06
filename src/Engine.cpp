@@ -175,8 +175,8 @@ void Engine::process(const std::chrono::microseconds hostTime, const std::size_t
   auto timeline = m_link.captureAudioTimeline();
 
   // Clear the buffer
-  std::fill(m_bufferClock.begin(), m_bufferClock.end(), 0.);
-  std::fill(m_bufferReset.begin(), m_bufferReset.end(), 0.);
+  std::fill(m_bufferClock.begin(), m_bufferClock.end(), 1.);
+  std::fill(m_bufferReset.begin(), m_bufferReset.end(), 1.);
 
   if (engineData.resetBeatTime)
   {

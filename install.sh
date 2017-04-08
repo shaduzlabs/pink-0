@@ -141,6 +141,8 @@ if [ $platform == "linux-rpi" ];
   then
     sudo cp --backup=numbered support/hostapd.conf /etc/hostapd/.
     sudo cp -r support/html/* /var/www/html/.
+    amixer set PCM 100%
+    sudo alsactl store
 fi
 
 echo ""

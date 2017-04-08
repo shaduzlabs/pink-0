@@ -76,8 +76,8 @@ std::size_t Engine::bufferSize() const
 
 void Engine::setBufferSize(std::size_t size)
 {
-  m_bufferClock = std::vector<double>(size, 0.);
-  m_bufferReset = std::vector<double>(size, 0.);
+  m_bufferClock = std::vector<double>(size, 1.);
+  m_bufferReset = std::vector<double>(size, 1.);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -175,8 +175,8 @@ void Engine::process(const std::chrono::microseconds hostTime, const std::size_t
   auto timeline = m_link.captureAudioTimeline();
 
   // Clear the buffer
-  std::fill(m_bufferClock.begin(), m_bufferClock.end(), 1.);
-  std::fill(m_bufferReset.begin(), m_bufferReset.end(), 1.);
+  std::fill(m_bufferClock.begin(), m_bufferClock.end(), 0.);
+  std::fill(m_bufferReset.begin(), m_bufferReset.end(), 0.);
 
   if (engineData.resetBeatTime)
   {

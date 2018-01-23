@@ -1,7 +1,8 @@
 Resistors
 12x  330R 0402 (R1 - R12)
 2x   750R 0402 (R15, R16)
-2x   10K 0402 (R13, R14)
+4x   1K   0402 (R17 - R20)
+2x   10K  0402 (R13, R14)
 
 Capacitors
 2x   33n 0603  (C1, C2)

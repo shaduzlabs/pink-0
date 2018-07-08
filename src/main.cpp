@@ -235,29 +235,34 @@ public:
 using namespace sl;
 using namespace sl::pi;
 
-int main(int, char**)
+int main(int argc_, char* argv_[])
 {
   ScopedLog log;
 
   log.info("daemon starting");
-  daemonize("/tmp/", "/var/run/pinkd.pid");
+  if (argc_ != 2 || std::string(argv_[1]) != "no-daemon")
+  {
+    daemonize("/tmp/", "/var/run/pinkd.pid");
+  }
 
   std::shared_ptr<Pink> pink(new Pink(120., 4., 1.0));
 
-#ifdef UI_USE_WEBSOCKET
-  UserInterfaceWebSocket webSocket(pink);
-#endif
-#ifdef UI_USE_RASPBERRY_PI_ZERO
-  UserInterfacePiZero zero(pink);
-#endif
-#if !defined(UI_USE_RASPBERRY_PI_ZERO) && !defined(UI_USE_WEBSOCKET)
-  UserInterfaceNone zero(pink);
-#endif
-
-  log.info("daemon running");
-
   try
   {
+    std::shared_ptr<Pink> pink(new Pink(120., 4., 1.0));
+
+#ifdef UI_USE_WEBSOCKET
+    UserInterfaceWebSocket webSocket(pink);
+#endif
+#ifdef UI_USE_RASPBERRY_PI_ZERO
+    UserInterfacePiZero zero(pink);
+#endif
+#if !defined(UI_USE_RASPBERRY_PI_ZERO) && !defined(UI_USE_WEBSOCKET)
+    UserInterfaceNone zero(pink);
+#endif
+
+    log.info("daemon running");
+
     while (true)
     {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));

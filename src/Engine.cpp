@@ -76,8 +76,8 @@ std::size_t Engine::bufferSize() const
 
 void Engine::setBufferSize(std::size_t size)
 {
-  m_bufferClock = std::vector<double>(size, 0.);
-  m_bufferReset = std::vector<double>(size, 0.);
+  m_bufferClock = std::vector<double>(size, 1.);
+  m_bufferReset = std::vector<double>(size, 1.);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -267,7 +267,7 @@ void Engine::renderMetronomeIntoBuffer(const Link::Timeline timeline,
       const auto secondsAfterReset = duration_cast<duration<double>>(hostTime - m_timeAtLastReset);
 
       auto phase = timeline.phaseAtTime(hostTime, quantum);
-      if (phase < m_phase)
+      if (phase < m_phase || phase == 0)
       {
         // reset!
         m_timeAtLastReset = hostTime;

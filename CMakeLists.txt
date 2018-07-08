@@ -14,6 +14,7 @@ set(PINK_MODULES_DIR ${PINK_ROOT_DIR}/modules)
 
 option(USE_PI_ZERO "Use RaspberryPI Zero shield as user interface" ON)
 option(USE_WEBSOCKET "Use the WebSocket based user interface" ON)
+option(USE_RTAUDIO "Use the RtAudio as audio backend instead of portaudio" OFF)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
   set(IS_PINK ON)
@@ -47,7 +48,7 @@ string(TIMESTAMP PINK_BUILD_DATE "%Y-%m-%d")
 
 set (PINK_VERSION_MAJOR 0)
 set (PINK_VERSION_MINOR 1)
-set (PINK_VERSION_MICRO 0)
+set (PINK_VERSION_MICRO 1)
 set (PINK_VERSION_STRING "${PINK_VERSION_MAJOR}.${PINK_VERSION_MINOR}.${PINK_VERSION_MICRO}")
 
 if($ENV{APPVEYOR})
@@ -113,11 +114,13 @@ message( STATUS "[${PINK_BUILD_DATE}] ${PINK_BUILD_DESCRIPTION} ")
 # Dependencies ----------------------------------------------------------------------------------- #
 
 include(${PINK_MODULES_DIR}/link/AbletonLinkConfig.cmake)
-add_subdirectory(${PINK_MODULES_DIR}/nmws)
 
-set(JUST_INSTALL_CEREAL ON)
-add_subdirectory(${PINK_MODULES_DIR}/cereal)
+if(USE_WEBSOCKET)
+  add_subdirectory(${PINK_MODULES_DIR}/nmws)
 
+  set(JUST_INSTALL_CEREAL ON CACHE BOOL ON FORCE)
+  add_subdirectory(${PINK_MODULES_DIR}/cereal)
+endif()
 
 # Source files ----------------------------------------------------------------------------------- #
 
@@ -182,6 +185,20 @@ if(USE_WEBSOCKET)
   target_link_libraries( pink PRIVATE cereal nmws)
   target_compile_definitions(pink PRIVATE UI_USE_WEBSOCKET)
 endif()
+if(USE_RTAUDIO)
+  message("   Using RtAudio")
+  add_subdirectory( ${PINK_MODULES_DIR}/rtaudio )
+  target_include_directories( pink PRIVATE ${PINK_MODULES_DIR}/rtaudio )
+  target_compile_definitions( pink PRIVATE AUDIO_USE_RTAUDIO )
+  if(UNIX)
+    target_link_libraries( pink PRIVATE rtaudio )
+  else()
+    target_link_libraries( pink PRIVATE rtaudio_static )
+  endif()
+else()
+  message("   Using Portaudio")
+  target_link_libraries( pink PRIVATE portaudio )
+endif()
 
 target_include_directories( pink PRIVATE src ${PINK_BUILD_DIR} /usr/include /usr/local/include)
 
@@ -189,7 +206,11 @@ if(APPLE)
   target_link_libraries( pink PRIVATE "-framework CoreServices" "-framework CoreFoundation" "-framework AudioUnit" "-framework AudioToolbox" "-framework CoreAudio" Ableton::Link)
   target_link_libraries( pink PRIVATE /usr/local/lib/libportaudio.a)
 else()
-  target_link_libraries( pink PRIVATE portaudio wiringPi Ableton::Link pthread)
+  if(USE_PI_ZERO)
+    target_link_libraries( pink PRIVATE wiringPi)
+  endif()
+
+  target_link_libraries( pink PRIVATE Ableton::Link pthread)
 endif()
 
 

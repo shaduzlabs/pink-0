@@ -1,5 +1,3 @@
-View this project on [CADLAB.io](https://cadlab.io/project/1079). 
-
 # pink-0
 ![A rendering of the Arduino shield](https://raw.githubusercontent.com/shaduzlabs/pink-0/master/hardware/pink-0.jpg)
 

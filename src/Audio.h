@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Engine.h"
+#include <ableton/platforms/Config.hpp>
 #include <ableton/link/HostTimeFilter.hpp>
 
 #ifdef AUDIO_USE_RTAUDIO
@@ -56,11 +57,7 @@ private:
   void start();
   void stop();
 
-#ifdef __APPLE__
-  ableton::link::HostTimeFilter<ableton::platforms::darwin::Clock> m_hostTimeFilter;
-#else
-  ableton::link::HostTimeFilter<ableton::platforms::stl::Clock> m_hostTimeFilter;
-#endif
+  ableton::link::HostTimeFilter<ableton::link::platform::Clock> m_hostTimeFilter;
 
   Engine m_engine;
   double m_sampleTime;

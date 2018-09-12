@@ -62,7 +62,7 @@ private:
   };
 
   Data pullEngineData();
-  void renderMetronomeIntoBuffer(ableton::Link::Timeline timeline,
+  void renderMetronomeIntoBuffer(ableton::Link::SessionState sessionState,
     double quantum,
     std::chrono::microseconds beginHostTime,
     std::size_t numSamples);
